@@ -1,0 +1,23 @@
+# Variables d'entorn
+.env
+.env.local
+.env.*.local
+
+# Dependències
+node_modules/
+vendor/
+
+# Drizzle migrations metadata (opcional, es pot versionar)
+# drizzle/
+
+# Fitxers del sistema operatiu
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
