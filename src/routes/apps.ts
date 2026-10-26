@@ -59,6 +59,41 @@ app.post("/", async (c) => {
   }
 });
 
+// PATCH /api/apps/:id — Actualitza una app existent
+app.patch("/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  if (Number.isNaN(id)) {
+    return c.json({ error: "ID invàlid" }, 400);
+  }
+
+  const body = await c.req.json();
+
+  try {
+    const [updated] = await db
+      .update(apps)
+      .set({
+        name: body.name,
+        slug: body.slug,
+        type: body.type,
+        updatedAt: new Date(),
+      })
+      .where(eq(apps.id, id))
+      .returning();
+
+    if (!updated) {
+      return c.json({ error: "App no trobada" }, 404);
+    }
+
+    return c.json(updated);
+  } catch (err) {
+    // Error típic: slug duplicat (violació de UNIQUE)
+    if (err instanceof Error && err.message.includes("duplicate key")) {
+      return c.json({ error: "Ja existeix una app amb aquest slug" }, 409);
+    }
+    throw err;
+  }
+});
+
 // DELETE /api/apps/:id — Esborra una app
 app.delete("/:id", async (c) => {
   const id = Number(c.req.param("id"));
